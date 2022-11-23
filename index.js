@@ -15,9 +15,8 @@ app.use(cors({ origin: '*' }));
 
 app.use(`${API_PREFIX}/buff`, buffRoutes);
 
-// if user is not logged-in redirect back to login page
-app.use(function (req, res) {
-    res.redirect(301, '/');
+app.get('/', function (req, res) {
+    res.redirect(301, '/api/buff/items');
 });
 
 connectDatabase();
