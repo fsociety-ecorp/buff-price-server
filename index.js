@@ -17,4 +17,4 @@ app.use(function (req, res, next) { setTimeout(next, 500) });
 
 app.use('/buff', buffRoutes);
 
-app.listen(PORT, () => console.log(`Server running on: https://localhost:${PORT}`));
+app.listen(process.env.PORT || PORT, () => console.log(`Server running on: https://localhost:${PORT}`));
