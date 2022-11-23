@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 app.use(cors({ origin: '*' }));
 
-app.get('/', (req, res) => res.send('Welcome to BUFF163 Pricing Server'));
+app.get('/', (req, res) => res.send('Welcome to BUFF163/CSGORoll Pricing Server'));
 
 app.use('/buff', buffRoutes);
 
