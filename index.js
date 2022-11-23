@@ -9,11 +9,9 @@ const PORT = 5000;
 
 app.use(bodyParser.json());
 
-app.use(cors({
-    origin: '*'
-}));
+app.use(cors({ origin: '*' }));
 
-app.use(function (req, res, next) { setTimeout(next, 500) });
+app.get('/', (req, res) => res.send('Welcome to BUFF163 Pricing Server'));
 
 app.use('/buff', buffRoutes);
 
