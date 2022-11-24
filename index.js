@@ -1,24 +1,39 @@
-import express from 'express';
-import bodyParser from 'body-parser';
-import cors from 'cors';
+const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-import buffRoutes from './routes/buff.js';
-import connectDatabase from './config/mongodb.js';
+const db = require('./model');
 
 const app = express();
 const PORT = 5000;
-const API_PREFIX = '/api'
 
+var corsOptions = {
+    origin: '*'
+}
+
+app.use(cors(corsOptions));
+
+// parse requests of content-type - application/json
 app.use(bodyParser.json());
 
-app.use(cors({ origin: '*' }));
-
-app.use(`${API_PREFIX}/buff`, buffRoutes);
+// connect to the database
+db.mongoose
+    .connect(db.url, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => {
+        console.log('Connected to the database.');
+    })
+    .catch(err => {
+        console.log('Cannot connect to the database.', err);
+        process.exit();
+    });
 
 app.get('/', function (req, res) {
-    res.redirect(301, '/api/buff/items');
+    res.json({ message: 'Welcome to the BUFF/CSGORoll Pricing Server' });
 });
 
-connectDatabase();
+require('./routes/buff.routes')(app);
 
-app.listen(process.env.PORT || PORT, () => console.log(`Server running on: https://localhost:${PORT}`));
+app.listen(process.env.PORT || PORT, () => console.log(`Server running on port ${PORT}.`));
