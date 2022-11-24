@@ -2,20 +2,27 @@ const db = require('../model');
 const Buff = db.buff;
 
 exports.saveSession = (req, res) => {
-    const session = new Buff({
-        sessionId: req.get('Cookie')
+    if (!req.body.session.id) {
+        res.status(400).send({ message: 'sessionId cannot be empty' });
+        return;
+    }
+
+    const buff = new Buff({
+        session: {
+            id: req.body.session.id,
+            author: req.body.session.author
+        }
     });
 
-    session.save(session)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || 'Some error occurred while saving the session'
-            });
-        });
+    buff.save(function (err) {
+        if (err) {
+            res.status(400).send({
+                message: err.message || 'Some error occurred while saving the session'
+            })
+        } else {
+            res.send(buff);
+        }
+    });
 };
 
 exports.findAll = (req, res) => {
@@ -26,7 +33,7 @@ exports.findAll = (req, res) => {
             message: 'Success',
             sessionId: `${cookie}`
         });
-        console.log('200 -> https://buff-server.herokuapp.com/api/buff/items')
+        console.log('200 -> https://buff-server.herokuapp.com/api/buff/items');
     } else {
         res.status(400).send({
             message: 'Error: You need to specify the sessionId'
@@ -36,5 +43,5 @@ exports.findAll = (req, res) => {
 }
 
 function validateCookie(cookie) {
-    return;
+    return cookie != null && cookie != "";
 }
