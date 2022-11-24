@@ -16,10 +16,12 @@ router.get('/items', (req, res) => {
             message: 'Success',
             sessionId: `${cookie}`
         });
+        console.log('200 -> https://buff-server.herokuapp.com/api/buff/items')
     } else {
         res.status(400).send({
             message: 'Error: You need to specify the sessionId'
         });
+        console.log('400 -> https://buff-server.herokuapp.com/api/buff/items -> Error: You need to specify the sessionId');
     }
 });
 
