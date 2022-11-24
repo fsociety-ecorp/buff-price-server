@@ -7,8 +7,6 @@ const marketGoodsEndpoint = 'https://buff.163.com/api/market/goods?game=csgo&pag
 router.get('/items', (req, res) => {
     const cookie = req.get('Cookie');
 
-    console.log(`New /items GET request from ${req.headers['origin']} with sessionId: ${req.headers['cookie']}`);
-
     if (validateCookie(cookie)) {
         res.status(200).send({
             message: 'Success',
