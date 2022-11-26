@@ -3,8 +3,11 @@ module.exports = app => {
 
     var router = require("express").Router();
 
+    // gets current session
+    router.get('/session', buff.getSession);
+
     // saves new session
-    router.post('/session', buff.saveSession);
+    router.post('/session', buff.postSession);
 
     // retrieves all items from Buff
     router.get('/items', buff.findAll);

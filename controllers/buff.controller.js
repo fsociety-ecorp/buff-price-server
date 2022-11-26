@@ -1,8 +1,23 @@
 const db = require('../model');
 const Buff = db.buff;
-const mongoose = require('mongoose');
 
-exports.saveSession = (req, res) => {
+exports.getSession = (req, res) => {
+    const title = req.query.title;
+    var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+
+    Buff.find(condition)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving the current session."
+            });
+        });
+}
+
+exports.postSession = (req, res) => {
     if (!req.body.session.id) {
         res.status(400).send({ message: 'sessionId cannot be empty' });
         return;
