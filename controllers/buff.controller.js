@@ -1,11 +1,17 @@
 const db = require('../model');
 const Buff = db.buff;
+const mongoose = require('mongoose');
 
 exports.saveSession = (req, res) => {
     if (!req.body.session.id) {
         res.status(400).send({ message: 'sessionId cannot be empty' });
         return;
     }
+
+    Buff.deleteMany({})
+        .catch(err => {
+            console.log(`Some error occurred while removing the previous session.${err.message}`);
+        });
 
     const buff = new Buff({
         session: {
@@ -18,7 +24,7 @@ exports.saveSession = (req, res) => {
         if (err) {
             res.status(400).send({
                 message: err.message || 'Some error occurred while saving the session'
-            })
+            });
         } else {
             res.send(buff);
         }
