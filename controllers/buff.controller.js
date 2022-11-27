@@ -47,20 +47,19 @@ exports.postSession = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    const cookie = req.get('Cookie');
-
-    if (validateCookie(cookie)) {
-        res.status(200).send({
-            message: 'Success',
-            sessionId: `${cookie}`
-        });
-        console.log('200 -> https://buff-server.herokuapp.com/api/buff/items');
-    } else {
-        res.status(400).send({
-            message: 'Error: You need to specify the sessionId'
-        });
-        console.log('400 -> https://buff-server.herokuapp.com/api/buff/items -> Error: You need to specify the sessionId');
-    }
+    Buff.find()
+        .then(data => {
+            if (data.length > 0) {
+                res.status(200).send({
+                    message: 'Success',
+                    sessionId: `${data[0].session.id}`
+                })
+            } else {
+                res.status(400).send({
+                    message: 'Bad Request',
+                })
+            }
+        })
 }
 
 function validateCookie(cookie) {
