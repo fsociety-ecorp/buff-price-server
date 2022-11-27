@@ -1,7 +1,9 @@
 const db = require('../model');
 const Buff = db.buff;
-const BUFF_URL = 'https://buff.163.com/api/market/goods?game=csgo&page_num={page_num}&page_size=80';
+const Item = db.item;
 const axios = require('axios');
+
+let BUFF_URL = 'https://buff.163.com/api/market/goods?game=csgo&page_num={page_num}&page_size=80';
 
 exports.getSession = (req, res) => {
     const title = req.query.title;
@@ -65,24 +67,61 @@ exports.findAll = (req, res) => {
         })
 }
 
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 async function requestBuffItems(session) {
-    console.log(`Requesting all items to ${BUFF_URL}`);
+    let totalPages = 0;
+    let counter = 1;
 
-    var requestOptions = {
-        method: 'get',
-        url: 'https://buff.163.com/api/market/goods?game=csgo&page_num=1&page_size=80',
-        headers: {
-            'Cookie': session,
-            'Host': 'buff.163.com',
-            'Accept-Encoding': 'application/json'
+    var data = {
+        items: []
+    }
+
+    do {
+        var url = BUFF_URL.replace('{page_num}', counter);
+
+        console.log(`Requesting items from page ${counter} -> ${url}`);
+
+        var requestOptions = {
+            method: 'get',
+            url: url,
+            headers: {
+                'Cookie': session,
+                'Host': 'buff.163.com',
+                'Accept-Encoding': 'application/json',
+                'User-Agent': 'PostmanRuntime/7.29.2'
+            }
+        };
+
+        const response = await axios(requestOptions);
+        if (response.status == 200 && response.data != null) {
+            totalPages = response.data.data.total_page;
+            counter++;
+
+            var iterator = response.data.data.items.values();
+            for (let elements of iterator) {
+                data.items.push(elements);
+            }
+        } else {
+            console.log(`${response.status}: Error while requesting items -> ${response.data}`);
+            break;
         }
-    };
 
-    await axios(requestOptions)
-        .then(function (response) {
-            console.log(JSON.stringify(response.data, undefined, 4));
-        })
-        .catch(function (error) {
-            console.log(error);
+        if (counter % 5 == 0) {
+            console.log('Waiting 10 seconds to avoid 429 - Too Many Request from BUFF server');
+            await sleep(10000);
+        }
+    } while (counter < 3);
+
+    Item.deleteMany({})
+        .catch(err => {
+            console.log(`Some error occurred while removing the previous items.${err.message}`);
+        });
+
+    Item.insertMany(data.items)
+        .catch(err => {
+            console.log(`Some error occurred while inserting the new list of items.${err.message}`);
         });
 }
