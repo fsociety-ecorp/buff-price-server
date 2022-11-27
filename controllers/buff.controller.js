@@ -4,19 +4,17 @@ const Buff = db.buff;
 exports.getSession = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
-    
-    setTimeout(() => {
-        Buff.find(condition)
-            .then(data => {
-                res.send(data);
-            })
-            .catch(err => {
-                res.status(500).send({
-                    message:
-                        err.message || "Some error occurred while retrieving the current session."
-                });
+
+    Buff.find(condition)
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving the current session."
             });
-    }, 1000);
+        });
 }
 
 exports.postSession = (req, res) => {
