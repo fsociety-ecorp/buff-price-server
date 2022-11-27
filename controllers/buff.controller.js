@@ -109,7 +109,7 @@ async function requestBuffItems(session) {
             break;
         }
 
-        if (counter % 5 == 0) {
+        if (counter % 3 == 0) {
             console.log('Waiting 10 seconds to avoid 429 - Too Many Request from BUFF server');
             await sleep(10000);
         }
