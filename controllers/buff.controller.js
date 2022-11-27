@@ -20,7 +20,6 @@ exports.getSession = (req, res) => {
 }
 
 exports.postSession = (req, res) => {
-    console.log(req);
     if (!req.body.session.id) {
         res.status(400).send({ message: 'sessionId cannot be empty' });
         return;
