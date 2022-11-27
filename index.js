@@ -8,7 +8,7 @@ const app = express();
 const PORT = 5000;
 
 var corsOptions = {
-    origin: '*'
+    origin: 'chrome-extension://cenjkgkekiebockkofebekbcjnlnkkdb'
 }
 
 app.use(cors(corsOptions));
