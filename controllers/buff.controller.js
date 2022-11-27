@@ -1,5 +1,7 @@
 const db = require('../model');
 const Buff = db.buff;
+const BUFF_URL = 'https://buff.163.com/api/market/goods?game=csgo&page_num={page_num}&page_size=80';
+const axios = require('axios');
 
 exports.getSession = (req, res) => {
     const title = req.query.title;
@@ -51,17 +53,36 @@ exports.findAll = (req, res) => {
         .then(data => {
             if (data.length > 0) {
                 res.status(200).send({
-                    message: 'Success',
-                    sessionId: `${data[0].session.id}`
+                    result: 'Success',
+                    sessionId: data[0].session.id
                 })
+                requestBuffItems(data[0].session.id);
             } else {
                 res.status(400).send({
-                    message: 'Bad Request',
+                    message: 'Bad Request: You need to specify a session ID.',
                 })
             }
         })
 }
 
-function validateCookie(cookie) {
-    return cookie != null && cookie != "";
+async function requestBuffItems(session) {
+    console.log(`Requesting all items to ${BUFF_URL}`);
+
+    var requestOptions = {
+        method: 'get',
+        url: 'https://buff.163.com/api/market/goods?game=csgo&page_num=1&page_size=80',
+        headers: {
+            'Cookie': session,
+            'Host': 'buff.163.com',
+            'Accept-Encoding': 'application/json'
+        }
+    };
+
+    await axios(requestOptions)
+        .then(function (response) {
+            console.log(JSON.stringify(response.data, undefined, 4));
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
 }

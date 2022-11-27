@@ -1,11 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { wakeDyno } = require('heroku-keep-awake');
 
 const db = require('./model');
 
 const app = express();
 const PORT = 5000;
+const DYNO_URL = 'https://buff-server.herokuapp.com';
 
 var corsOptions = {
     origin: 'chrome-extension://cenjkgkekiebockkofebekbcjnlnkkdb'
@@ -37,4 +39,7 @@ app.get('/', function (req, res) {
 
 require('./routes/buff.routes')(app);
 
-app.listen(process.env.PORT || PORT, () => console.log(`Server running on port ${PORT}.`));
+app.listen(process.env.PORT || PORT, () => {
+    wakeDyno(DYNO_URL);
+    console.log(`Server running on port ${PORT}.`);
+});
