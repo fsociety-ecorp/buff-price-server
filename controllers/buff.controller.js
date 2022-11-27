@@ -4,20 +4,23 @@ const Buff = db.buff;
 exports.getSession = (req, res) => {
     const title = req.query.title;
     var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
-
-    Buff.find(condition)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while retrieving the current session."
+    
+    setTimeout(() => {
+        Buff.find(condition)
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while retrieving the current session."
+                });
             });
-        });
+    }, 1000);
 }
 
 exports.postSession = (req, res) => {
+    console.log(req);
     if (!req.body.session.id) {
         res.status(400).send({ message: 'sessionId cannot be empty' });
         return;
