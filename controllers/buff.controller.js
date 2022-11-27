@@ -113,7 +113,7 @@ async function requestBuffItems(session) {
             console.log('Waiting 10 seconds to avoid 429 - Too Many Request from BUFF server');
             await sleep(10000);
         }
-    } while (counter < 3);
+    } while (counter < totalPages);
 
     Item.deleteMany({})
         .catch(err => {
