@@ -3,7 +3,7 @@ const Buff = db.buff;
 const Item = db.item;
 const axios = require('axios');
 const cron = require('node-cron');
-const { sleep, getCookieSession, getCurrentTimeStamp } = require('../utils/utils');
+const { sleep, getCurrentTimeStamp } = require('../utils/utils');
 
 let BUFF_URL = 'https://buff.163.com/api/market/goods?game=csgo&page_num={page_num}&page_size=80';
 
@@ -69,17 +69,23 @@ exports.findAll = (req, res) => {
 }
 
 // Runs everyday at 10 am
-let job = cron.schedule("0 10 * * *", () => {
+cron.schedule("*/30 * * * * *", () => {
     requestBuffItems()
 });
 
 async function requestBuffItems() {
     let totalPages = 0;
     let counter = 1;
+    let cookie = "";
 
     var data = { items: [] }
 
     console.log(`[${getCurrentTimeStamp()}] Running the scheduled task to update BUFF163 items database. This may take a few minutes.`);
+
+    Buff.find({}).then(data => {
+        cookie = data[0].session.id
+        console.log(`Starting database update with session id: ${cookie}`);
+    });
 
     do {
         var url = BUFF_URL.replace('{page_num}', counter);
@@ -90,7 +96,7 @@ async function requestBuffItems() {
             method: 'get',
             url: url,
             headers: {
-                'Cookie': getCookieSession(Buff),
+                'Cookie': cookie,
                 'Host': 'buff.163.com',
                 'Accept-Encoding': 'application/json',
                 'User-Agent': 'PostmanRuntime/7.29.2'
@@ -99,7 +105,7 @@ async function requestBuffItems() {
 
         const response = await axios(requestOptions);
 
-        if (response.status == 200 && response.data.data != null) {  
+        if (response.status == 200 && response.data.data != null) {
             totalPages = response.data.data.total_page;
             counter++;
 
