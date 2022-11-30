@@ -2,6 +2,8 @@ const db = require('../model');
 const Buff = db.buff;
 const Item = db.item;
 const axios = require('axios');
+const cron = require('node-cron');
+const { sleep, getCookieSession, getCurrentTimeStamp } = require('../utils/utils');
 
 let BUFF_URL = 'https://buff.163.com/api/market/goods?game=csgo&page_num={page_num}&page_size=80';
 
@@ -58,7 +60,6 @@ exports.findAll = (req, res) => {
                     result: 'Success',
                     sessionId: data[0].session.id
                 })
-                requestBuffItems(data[0].session.id);
             } else {
                 res.status(400).send({
                     message: 'Bad Request: You need to specify a session ID.',
@@ -67,17 +68,18 @@ exports.findAll = (req, res) => {
         })
 }
 
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
+// Runs everyday at 10 am
+let job = cron.schedule("0 10 * * *", () => {
+    requestBuffItems()
+});
 
-async function requestBuffItems(session) {
+async function requestBuffItems() {
     let totalPages = 0;
     let counter = 1;
 
-    var data = {
-        items: []
-    }
+    var data = { items: [] }
+
+    console.log(`[${getCurrentTimeStamp()}] Running the scheduled task to update BUFF163 items database. This may take a few minutes.`);
 
     do {
         var url = BUFF_URL.replace('{page_num}', counter);
@@ -88,7 +90,7 @@ async function requestBuffItems(session) {
             method: 'get',
             url: url,
             headers: {
-                'Cookie': session,
+                'Cookie': getCookieSession(Buff),
                 'Host': 'buff.163.com',
                 'Accept-Encoding': 'application/json',
                 'User-Agent': 'PostmanRuntime/7.29.2'
@@ -96,7 +98,8 @@ async function requestBuffItems(session) {
         };
 
         const response = await axios(requestOptions);
-        if (response.status == 200 && response.data != null) {
+
+        if (response.status == 200 && response.data.data != null) {  
             totalPages = response.data.data.total_page;
             counter++;
 
@@ -105,8 +108,8 @@ async function requestBuffItems(session) {
                 data.items.push(elements);
             }
         } else {
-            console.log(`${response.status}: Error while requesting items -> ${response.data}`);
-            break;
+            console.log(`${response.status}: Error while requesting items -> ${response.data.code}`);
+            return;
         }
 
         if (counter % 3 == 0) {
