@@ -119,7 +119,12 @@ async function requestBuffItems() {
         }
 
         if (counter % 3 == 0) {
-            console.log('Waiting 10 seconds to avoid 429 - Too Many Request from BUFF server');
+            console.log('Waiting 10 seconds to avoid 429 overloading the server');
+            await sleep(10000);
+        }
+
+        if (counter % 10 == 0) {
+            console.log('Waiting 10 more seconds to avoid overloading the server');
             await sleep(10000);
         }
     } while (counter < totalPages);
