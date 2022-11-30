@@ -124,8 +124,13 @@ async function requestBuffItems() {
         }
 
         if (counter % 10 == 0) {
-            console.log('Waiting 10 more seconds to avoid overloading the server');
-            await sleep(10000);
+            console.log('Waiting 20 more seconds to avoid overloading the server');
+            await sleep(20000);
+        }
+
+        if (counter % 50 == 0) {
+            console.log('Waiting 40 more seconds to avoid overloading the server');
+            await sleep(40000);
         }
     } while (counter < totalPages);
 
