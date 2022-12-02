@@ -1,4 +1,5 @@
 exports.sleep = (ms) => {
+    console.log(`Waiting ${ms} seconds to avoid overloading the server.`);
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 

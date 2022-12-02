@@ -69,7 +69,7 @@ exports.findAll = (req, res) => {
 }
 
 // Runs everyday at 10 am
-cron.schedule("0 17 * * *", () => {
+cron.schedule("0 22 * * *", () => {
     requestBuffItems()
 });
 
@@ -119,12 +119,15 @@ async function requestBuffItems() {
         }
 
         if (counter % 5 == 0) {
-            console.log('Waiting 30 seconds to avoid 429 overloading the server');
-            await sleep(30000);
-        }
-        if (counter % 50 == 0) {
-            console.log('Waiting 60 more seconds to avoid overloading the server');
-            await sleep(60000);
+            sleep(30000);
+        } else if (counter % 20 == 0) {
+            sleep(40000);
+        } else if (counter % 50 == 0) {
+            sleep(60000);
+        } else if (counter % 100 == 0) {
+            sleep(1200000);
+        } else {
+            continue;
         }
     } while (counter < totalPages);
 
