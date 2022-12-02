@@ -69,7 +69,7 @@ exports.findAll = (req, res) => {
 }
 
 // Runs everyday at 10 am
-cron.schedule("0 22 * * *", () => {
+cron.schedule("20 22 * * *", () => {
     requestBuffItems()
 });
 
@@ -119,13 +119,13 @@ async function requestBuffItems() {
         }
 
         if (counter % 5 == 0) {
-            sleep(30000);
-        } else if (counter % 20 == 0) {
-            sleep(40000);
-        } else if (counter % 50 == 0) {
             sleep(60000);
+        } else if (counter % 20 == 0) {
+            sleep(80000);
+        } else if (counter % 50 == 0) {
+            sleep(120000);
         } else if (counter % 100 == 0) {
-            sleep(1200000);
+            sleep(200000);
         } else {
             continue;
         }
