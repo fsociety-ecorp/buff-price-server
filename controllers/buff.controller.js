@@ -69,7 +69,7 @@ exports.findAll = (req, res) => {
 }
 
 // Runs everyday at 10 am
-cron.schedule("20 22 * * *", () => {
+cron.schedule("40 1 * * *", () => {
     requestBuffItems()
 });
 
