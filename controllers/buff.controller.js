@@ -119,13 +119,13 @@ async function requestBuffItems() {
         }
 
         if (counter % 5 == 0) {
-            sleep(60000);
+            await sleep(60000);
         } else if (counter % 20 == 0) {
-            sleep(80000);
+            await sleep(80000);
         } else if (counter % 50 == 0) {
-            sleep(120000);
+            await sleep(120000);
         } else if (counter % 100 == 0) {
-            sleep(200000);
+            await sleep(200000);
         } else {
             continue;
         }
