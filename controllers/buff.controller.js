@@ -57,8 +57,7 @@ exports.findAll = (req, res) => {
         .then(data => {
             if (data.length > 0) {
                 res.status(200).send({
-                    result: 'Success',
-                    sessionId: data[0].session.id
+                    data
                 })
             } else {
                 res.status(400).send({
