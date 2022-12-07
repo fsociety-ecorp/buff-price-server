@@ -68,7 +68,6 @@ exports.findAll = (req, res) => {
         })
 }
 
-// Runs everyday at 10 am
 cron.schedule("55 15 * * *", () => {
     requestBuffItems()
 });
@@ -140,4 +139,6 @@ async function requestBuffItems() {
         .catch(err => {
             console.log(`Some error occurred while inserting the new list of items.${err.message}`);
         });
+
+    console.log('Update completed with success');
 }
