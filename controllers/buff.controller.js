@@ -53,7 +53,7 @@ exports.postSession = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-    Buff.find()
+    Item.find()
         .then(data => {
             if (data.length > 0) {
                 res.status(200).send({
