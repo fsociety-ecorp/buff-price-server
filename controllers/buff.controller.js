@@ -3,7 +3,7 @@ const Buff = db.buff;
 const Item = db.item;
 const axios = require('axios');
 const cron = require('node-cron');
-const { sleep, getCurrentTimeStamp } = require('../utils/utils');
+const { sleep } = require('../utils/utils');
 
 let BUFF_URL = 'https://buff.163.com/api/market/goods?game=csgo&page_num={page_num}&page_size=80';
 
@@ -57,7 +57,8 @@ exports.findAll = (req, res) => {
         .then(data => {
             if (data.length > 0) {
                 res.status(200).send({
-                    data
+                    data,
+                    total: data.length
                 })
             } else {
                 res.status(400).send({
@@ -67,7 +68,7 @@ exports.findAll = (req, res) => {
         })
 }
 
-cron.schedule("0 18 * * *", () => {
+cron.schedule("20 19 * * *", () => {
     requestBuffItems()
 });
 
@@ -131,12 +132,12 @@ async function requestBuffItems() {
 
     console.log(`Requests finished, adding ${data.items.length} items to the database`);
 
-    Item.deleteMany({})
+    await Item.deleteMany({})
         .catch(err => {
             console.log(`Some error occurred while removing the previous items.${err.message}`);
         });
 
-    Item.insertMany(data.items)
+    await Item.insertMany(data.items)
         .catch(err => {
             console.log(`Some error occurred while inserting the new list of items.${err.message}`);
         });
