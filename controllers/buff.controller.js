@@ -67,7 +67,7 @@ exports.findAll = (req, res) => {
         })
 }
 
-cron.schedule("55 15 * * *", () => {
+cron.schedule("0 18 * * *", () => {
     requestBuffItems()
 });
 
@@ -78,7 +78,7 @@ async function requestBuffItems() {
 
     var data = { items: [] }
 
-    console.log(`[${getCurrentTimeStamp()}] Running the scheduled task to update BUFF163 items database. This may take a few minutes.`);
+    console.log(`Running the scheduled task to update BUFF163 items database. This may take a few minutes.`);
 
     Buff.find({}).then(data => {
         cookie = data[0].session.id
@@ -127,7 +127,9 @@ async function requestBuffItems() {
         } else {
             continue;
         }
-    } while (counter < totalPages);
+    } while (counter <= totalPages);
+
+    console.log(`Requests finished, adding ${data.items.length} items to the database`);
 
     Item.deleteMany({})
         .catch(err => {
@@ -139,5 +141,5 @@ async function requestBuffItems() {
             console.log(`Some error occurred while inserting the new list of items.${err.message}`);
         });
 
-    console.log('Update completed with success');
+    console.log('Update completed with success.');
 }
