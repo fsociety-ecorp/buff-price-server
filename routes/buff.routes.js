@@ -12,5 +12,8 @@ module.exports = app => {
     // retrieves all items from Buff
     router.get('/items', buff.findAll);
 
+    // forces an update
+    router.get('/items/update', buff.findAll);
+
     app.use('/api/buff', router);
 };

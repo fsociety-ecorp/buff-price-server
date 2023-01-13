@@ -68,6 +68,13 @@ exports.findAll = (req, res) => {
         })
 }
 
+exports.forceItemsUpdate = (req, res) => {
+    res.status(200).send({
+        message: "Starting items update. This operation may take a while."
+    });
+    requestBuffItems()
+}
+
 cron.schedule("0 */3 * * *", () => {
     requestBuffItems()
 });
