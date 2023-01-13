@@ -13,7 +13,7 @@ module.exports = app => {
     router.get('/items', buff.findAll);
 
     // forces an update
-    router.get('/items/update', buff.findAll);
+    router.get('/items/update', buff.forceItemsUpdate);
 
     app.use('/api/buff', router);
 };
