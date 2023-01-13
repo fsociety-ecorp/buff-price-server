@@ -68,7 +68,7 @@ exports.findAll = (req, res) => {
         })
 }
 
-cron.schedule("13 1 * * *", () => {
+cron.schedule("0 9 * * *", () => {
     requestBuffItems()
 });
 
