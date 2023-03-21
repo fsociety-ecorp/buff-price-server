@@ -1,17 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 
 const db = require('./model');
 
 const app = express();
 const PORT = 5000;
-
-var corsOptions = {
-    origin: 'chrome-extension://cenjkgkekiebockkofebekbcjnlnkkdb'
-}
-
-app.use(cors(corsOptions));
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
